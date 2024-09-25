@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 1300">
+  <defs>
+    <style>
+      .cls-1 {
+        font-size: 25px;
+      }
+
+      .cls-1, .cls-2, .cls-3, .cls-4 {
+        font-family: SourceCodeProRoman-SemiBold, 'Source Code Pro';
+        font-variation-settings: 'wght' 600;
+        font-weight: 600;
+      }
+
+      .cls-1, .cls-5, .cls-4 {
+        fill: #333;
+      }
+
+      .cls-6 {
+        stroke-dasharray: 9.78 9.78;
+      }
+
+      .cls-6, .cls-7 {
+        fill: none;
+        stroke: #333;
+        stroke-miterlimit: 10;
+        stroke-width: 4px;
+      }
+
+      .cls-2, .cls-3 {
+        font-size: 35px;
+      }
+
+      .cls-2, .cls-8 {
+        fill: #ccc;
+      }
+
+      .cls-4 {
+        font-size: 40px;
+      }
+
+      .cls-9 {
+        fill: #bdc3c7;
+      }
+
+      .cls-10 {
+        fill: #2d3436;
+      }
+    </style>
+  </defs>
+  <g>
+    <rect class="cls-9" x="7.5" y="7.5" width="945" height="1285" rx="85.04" ry="85.04"/>
+    <path class="cls-10" d="M867.46,15c42.76,0,77.54,34.79,77.54,77.54v1114.92c0,42.76-34.79,77.54-77.54,77.54H92.54c-42.76,0-77.54-34.79-77.54-77.54V92.54C15,49.79,49.79,15,92.54,15h774.92M867.46,0H92.54C41.43,0,0,41.43,0,92.54v1114.92c0,51.11,41.43,92.54,92.54,92.54h774.92c51.11,0,92.54-41.43,92.54-92.54V92.54c0-51.11-41.43-92.54-92.54-92.54h0Z"/>
+  </g>
+  <g>
+    <rect class="cls-5" x="102.5" y="436.5" width="395" height="95"/>
+    <path class="cls-5" d="M495,439v90H105v-90h390M500,434H100v100h400v-100h0Z"/>
+  </g>
+  <rect class="cls-5" x="500" y="429" width="100" height="10"/>
+  <rect class="cls-5" x="500" y="829" width="100" height="10"/>
+  <rect class="cls-5" x="500" y="1224" width="100" height="10"/>
+  <text class="cls-2" transform="translate(226.5 496.35)"><tspan x="0" y="0">Padding</tspan></text>
+  <g>
+    <rect class="cls-8" x="102.5" y="136.5" width="395" height="295"/>
+    <path class="cls-5" d="M495,139v290H105V139h390M500,134H100v300h400V134h0Z"/>
+  </g>
+  <text class="cls-3" transform="translate(237 296.35)"><tspan x="0" y="0">Object</tspan></text>
+  <text class="cls-1" transform="translate(560 1042.82)"><tspan x="0" y="0">L1 Cache Line Size</tspan></text>
+  <g>
+    <rect class="cls-5" x="102.5" y="836.5" width="395" height="95"/>
+    <path class="cls-5" d="M495,839v90H105v-90h390M500,834H100v100h400v-100h0Z"/>
+  </g>
+  <text class="cls-2" transform="translate(226.5 896.35)"><tspan x="0" y="0">Padding</tspan></text>
+  <g>
+    <rect class="cls-8" x="102.5" y="536.5" width="395" height="295"/>
+    <path class="cls-5" d="M495,539v290H105v-290h390M500,534H100v300h400v-300h0Z"/>
+  </g>
+  <text class="cls-3" transform="translate(237 696.35)"><tspan x="0" y="0">Object</tspan></text>
+  <g>
+    <rect class="cls-8" x="102.5" y="936.5" width="395" height="295"/>
+    <path class="cls-5" d="M495,939v290H105v-290h390M500,934H100v300h400v-300h0Z"/>
+  </g>
+  <text class="cls-3" transform="translate(237 1096.35)"><tspan x="0" y="0">Object</tspan></text>
+  <g>
+    <line class="cls-7" x1="550" y1="1207.7" x2="550" y2="1202.7"/>
+    <line class="cls-6" x1="550" y1="1192.91" x2="550" y2="865.2"/>
+    <line class="cls-7" x1="550" y1="860.3" x2="550" y2="855.3"/>
+    <path class="cls-5" d="M550,1204.11l-7.21-4.38-.16.25,4.67,11.75c.9,4.09,1.8,8.19,2.7,12.28.9-4.09,1.8-8.19,2.7-12.28l4.67-11.75-.12-.25-7.25,4.38Z"/>
+    <path class="cls-5" d="M550,858.89l-7.21,4.38-.16-.25,4.67-11.75c.9-4.09,1.8-8.19,2.7-12.28.9,4.09,1.8,8.19,2.7,12.28l4.67,11.75-.12.25-7.25-4.38Z"/>
+  </g>
+  <text class="cls-4" transform="translate(192 98.12)"><tspan x="0" y="0">Slab Page</tspan></text>
+  <path class="cls-5" d="M490,144v1080H110V144h380M500,134H100v1100h400V134h0Z"/>
+</svg>

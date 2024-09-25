@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2240 700">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+        stroke: #2d3436;
+        stroke-miterlimit: 10;
+        stroke-width: 4px;
+      }
+
+      .cls-2 {
+        fill: #74b9ff;
+      }
+
+      .cls-3 {
+        font-size: 24px;
+      }
+
+      .cls-3, .cls-4 {
+        font-family: SourceCodeProRoman-SemiBold, 'Source Code Pro';
+        font-variation-settings: 'wght' 600;
+        font-weight: 600;
+      }
+
+      .cls-5 {
+        fill: #55efc4;
+      }
+
+      .cls-6 {
+        fill: #a29bfe;
+      }
+
+      .cls-4 {
+        font-size: 35px;
+      }
+
+      .cls-7 {
+        fill: #00b894;
+      }
+
+      .cls-8 {
+        fill: #bdc3c7;
+      }
+
+      .cls-9 {
+        fill: #2d3436;
+      }
+    </style>
+  </defs>
+  <g>
+    <path class="cls-8" d="M97.14,10h2045.72c48.1,0,87.14,39.05,87.14,87.14v505.72c0,48.1-39.05,87.14-87.14,87.14H97.14c-48.1,0-87.14-39.05-87.14-87.14V97.14C10,49.05,49.05,10,97.14,10Z"/>
+    <path class="cls-9" d="M2142.86,20c42.54,0,77.14,34.61,77.14,77.14v505.72c0,42.54-34.61,77.14-77.14,77.14H97.14c-42.54,0-77.14-34.61-77.14-77.14V97.14c0-42.54,34.61-77.14,77.14-77.14h2045.72M2142.86,0H97.14C43.49,0,0,43.49,0,97.14v505.72c0,53.65,43.49,97.14,97.14,97.14h2045.72c53.65,0,97.14-43.49,97.14-97.14V97.14c0-53.65-43.49-97.14-97.14-97.14h0Z"/>
+  </g>
+  <g>
+    <rect class="cls-7" x="102" y="202" width="296" height="96"/>
+    <path class="cls-9" d="M396,204v92H104v-92h292M400,200H100v100h300v-100h0Z"/>
+  </g>
+  <text class="cls-3" transform="translate(170.8 258.47)"><tspan x="0" y="0">free_area[]</tspan></text>
+  <g>
+    <rect class="cls-7" x="102" y="302" width="296" height="96"/>
+    <path class="cls-9" d="M396,304v92H104v-92h292M400,300H100v100h300v-100h0Z"/>
+  </g>
+  <text class="cls-3" transform="translate(228.4 358.47)"><tspan x="0" y="0">...</tspan></text>
+  <g>
+    <rect class="cls-5" x="102" y="102" width="296" height="96"/>
+    <path class="cls-9" d="M396,104v92H104v-92h292M400,100H100v100h300v-100h0Z"/>
+  </g>
+  <text class="cls-4" transform="translate(187 162.35)"><tspan x="0" y="0">zone_t</tspan></text>
+  <path class="cls-9" d="M392,108v284H108V108h284M400,100H100v300h300V100h0Z"/>
+  <g>
+    <rect class="cls-6" x="602" y="102" width="96" height="96"/>
+    <path class="cls-9" d="M696,104v92h-92v-92h92M700,100h-100v100h100v-100h0Z"/>
+  </g>
+  <g>
+    <rect class="cls-2" x="863" y="113" width="74" height="74"/>
+    <path class="cls-9" d="M934,116v68h-68v-68h68M940,110h-80v80h80v-80h0Z"/>
+  </g>
+  <text class="cls-4" transform="translate(639.5 162.35)"><tspan x="0" y="0">0</tspan></text>
+  <g>
+    <rect class="cls-6" x="602" y="202" width="96" height="96"/>
+    <path class="cls-9" d="M696,204v92h-92v-92h92M700,200h-100v100h100v-100h0Z"/>
+  </g>
+  <g>
+    <rect class="cls-6" x="602" y="302" width="96" height="96"/>
+    <path class="cls-9" d="M696,304v92h-92v-92h92M700,300h-100v100h100v-100h0Z"/>
+  </g>
+  <g>
+    <rect class="cls-6" x="602" y="402" width="96" height="96"/>
+    <path class="cls-9" d="M696,404v92h-92v-92h92M700,400h-100v100h100v-100h0Z"/>
+  </g>
+  <g>
+    <rect class="cls-6" x="602" y="502" width="96" height="96"/>
+    <path class="cls-9" d="M696,504v92h-92v-92h92M700,500h-100v100h100v-100h0Z"/>
+  </g>
+  <path class="cls-9" d="M692,108v484h-84V108h84M700,100h-100v500h100V100h0Z"/>
+  <text class="cls-4" transform="translate(639.5 262.35)"><tspan x="0" y="0">1</tspan></text>
+  <text class="cls-4" transform="translate(639.5 362.35)"><tspan x="0" y="0">2</tspan></text>
+  <text class="cls-4" transform="translate(639.5 462.35)"><tspan x="0" y="0">3</tspan></text>
+  <text class="cls-4" transform="translate(639.5 562.35)"><tspan x="0" y="0">4</tspan></text>
+  <g>
+    <path class="cls-1" d="M380.09,253.19c22.42,12.93,51.55,3.08,71.98-12.81,20.43-15.88,36.28-37.3,57.8-51.68,26.49-17.7,38.24-29.21,61.68-34.14"/>
+    <polygon class="cls-9" points="594 152 564.04 168.89 569.91 155.04 560.78 143.08 594 152"/>
+  </g>
+  <g>
+    <line class="cls-1" x1="940" y1="150" x2="991.76" y2="150"/>
+    <polygon class="cls-9" points="1020 150 980.2 166.26 989.65 150 980.2 133.74 1020 150"/>
+  </g>
+  <g>
+    <rect class="cls-2" x="1023" y="113" width="74" height="74"/>
+    <path class="cls-9" d="M1094,116v68h-68v-68h68M1100,110h-80v80h80v-80h0Z"/>
+  </g>
+  <g>
+    <line class="cls-1" x1="1100" y1="150" x2="1151.76" y2="150"/>
+    <polygon class="cls-9" points="1180 150 1140.2 166.26 1149.65 150 1140.2 133.74 1180 150"/>
+  </g>
+  <g>
+    <rect class="cls-2" x="1183" y="113" width="74" height="74"/>
+    <path class="cls-9" d="M1254,116v68h-68v-68h68M1260,110h-80v80h80v-80h0Z"/>
+  </g>
+  <g>
+    <line class="cls-1" x1="1260" y1="150" x2="1311.76" y2="150"/>
+    <polygon class="cls-9" points="1340 150 1300.2 166.26 1309.65 150 1300.2 133.74 1340 150"/>
+  </g>
+  <g>
+    <rect class="cls-2" x="1343" y="113" width="74" height="74"/>
+    <path class="cls-9" d="M1414,116v68h-68v-68h68M1420,110h-80v80h80v-80h0Z"/>
+  </g>
+  <g>
+    <line class="cls-1" x1="700" y1="150" x2="831.76" y2="150"/>
+    <polygon class="cls-9" points="860 150 820.2 166.26 829.65 150 820.2 133.74 860 150"/>
+  </g>
+  <g>
+    <rect class="cls-2" x="863" y="213" width="154" height="74"/>
+    <path class="cls-9" d="M1014,216v68h-148v-68h148M1020,210h-160v80h160v-80h0Z"/>
+  </g>
+  <g>
+    <line class="cls-1" x1="1020" y1="250" x2="1071.76" y2="250"/>
+    <polygon class="cls-9" points="1100 250 1060.2 266.26 1069.65 250 1060.2 233.74 1100 250"/>
+  </g>
+  <g>
+    <rect class="cls-2" x="1103" y="213" width="154" height="74"/>
+    <path class="cls-9" d="M1254,216v68h-148v-68h148M1260,210h-160v80h160v-80h0Z"/>
+  </g>
+  <g>
+    <line class="cls-1" x1="1260" y1="250" x2="1311.76" y2="250"/>
+    <polygon class="cls-9" points="1340 250 1300.2 266.26 1309.65 250 1300.2 233.74 1340 250"/>
+  </g>
+  <g>
+    <rect class="cls-2" x="1343" y="213" width="154" height="74"/>
+    <path class="cls-9" d="M1494,216v68h-148v-68h148M1500,210h-160v80h160v-80h0Z"/>
+  </g>
+  <g>
+    <line class="cls-1" x1="1500" y1="250" x2="1551.76" y2="250"/>
+    <polygon class="cls-9" points="1580 250 1540.2 266.26 1549.65 250 1540.2 233.74 1580 250"/>
+  </g>
+  <g>
+    <rect class="cls-2" x="1583" y="213" width="154" height="74"/>
+    <path class="cls-9" d="M1734,216v68h-148v-68h148M1740,210h-160v80h160v-80h0Z"/>
+  </g>
+  <g>
+    <line class="cls-1" x1="1740" y1="250" x2="1791.76" y2="250"/>
+    <polygon class="cls-9" points="1820 250 1780.2 266.26 1789.65 250 1780.2 233.74 1820 250"/>
+  </g>
+  <g>
+    <rect class="cls-2" x="1823" y="213" width="154" height="74"/>
+    <path class="cls-9" d="M1974,216v68h-148v-68h148M1980,210h-160v80h160v-80h0Z"/>
+  </g>
+  <g>
+    <line class="cls-1" x1="700" y1="250" x2="831.76" y2="250"/>
+    <polygon class="cls-9" points="860 250 820.2 266.26 829.65 250 820.2 233.74 860 250"/>
+  </g>
+  <g>
+    <rect class="cls-2" x="863" y="313" width="314" height="74"/>
+    <path class="cls-9" d="M1174,316v68h-308v-68h308M1180,310h-320v80h320v-80h0Z"/>
+  </g>
+  <g>
+    <line class="cls-1" x1="1180" y1="350" x2="1231.76" y2="350"/>
+    <polygon class="cls-9" points="1260 350 1220.2 366.26 1229.65 350 1220.2 333.74 1260 350"/>
+  </g>
+  <g>
+    <rect class="cls-2" x="1263" y="313" width="314" height="74"/>
+    <path class="cls-9" d="M1574,316v68h-308v-68h308M1580,310h-320v80h320v-80h0Z"/>
+  </g>
+  <g>
+    <line class="cls-1" x1="700" y1="350" x2="831.76" y2="350"/>
+    <polygon class="cls-9" points="860 350 820.2 366.26 829.65 350 820.2 333.74 860 350"/>
+  </g>
+  <g>
+    <rect class="cls-2" x="863" y="413" width="634" height="74"/>
+    <path class="cls-9" d="M1494,416v68h-628v-68h628M1500,410h-640v80h640v-80h0Z"/>
+  </g>
+  <g>
+    <line class="cls-1" x1="700" y1="450" x2="831.76" y2="450"/>
+    <polygon class="cls-9" points="860 450 820.2 466.26 829.65 450 820.2 433.74 860 450"/>
+  </g>
+  <g>
+    <rect class="cls-2" x="863" y="513" width="1274" height="74"/>
+    <path class="cls-9" d="M2134,516v68H866v-68h1268M2140,510H860v80h1280v-80h0Z"/>
+  </g>
+  <g>
+    <line class="cls-1" x1="700" y1="550" x2="831.76" y2="550"/>
+    <polygon class="cls-9" points="860 550 820.2 566.26 829.65 550 820.2 533.74 860 550"/>
+  </g>
+</svg>
