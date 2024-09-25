@@ -17,7 +17,7 @@ Note that this document represents the current state of the Linux kernel and API
 Linux systems use **virtual addresses** to abstractly represent addresses of physical memory.
 This abstraction creates a large, contiguous, isolated address space for each process, which the kernel manages through various mechanisms, including page tables and virtual memory areas.
 
-A process's memory management context is represented by the `struct mm_struct` datatype, defined in file [`include/linux/mm_types.h` (link to source)](https://elixir.bootlin.com/linux/v6.11/source/include/linux/mm_types.h#L779).
+A process is represented in Linux by a `struct task_struct`, which I won't discuss in detail; the key property of it is that it holds a `struct mm_struct`, which holds information about the process's virtual memory layout, defined in file [`include/linux/mm_types.h` (link to source)](https://elixir.bootlin.com/linux/v6.11/source/include/linux/mm_types.h#L779).
 The relevant fields of this datatype are included below, with annotated descriptions:
 
 ```C
@@ -145,7 +145,7 @@ struct mm_struct {
 ```
 
 **Virtual memory areas** (VMAs) represent contiguous regions of virtual memory in a process's address space and are central to the way that the Linux kernel organizes memory allocation.
-[[[TODO: ...]]]
+VMAs are used to map files, allocate memory, and set up shared memory.
 
 A VMA is represented in the kernel by datatype `struct vm_area_struct`, defined in file [`include/linux/mm_types.h` (link to source)](https://elixir.bootlin.com/linux/v6.11/source/include/linux/mm_types.h#L664).
 The relevant fields of this datatype are included below, with annotated descriptions:
@@ -155,13 +155,9 @@ The relevant fields of this datatype are included below, with annotated descript
 struct vm_area_struct {
     /* The first cache line has the info for VMA tree walking. */
 
-    union {
-        struct {
-            /* VMA covers [vm_start; vm_end) addresses within mm */
-            unsigned long vm_start;
-            unsigned long vm_end;
-        };
-    };
+    /* VMA covers [vm_start; vm_end) addresses within mm */
+    unsigned long vm_start;
+    unsigned long vm_end;
 
     struct mm_struct *vm_mm;    /* The address space we belong to. */
     pgprot_t vm_page_prot;          /* Access permissions of this VMA. */
@@ -278,7 +274,46 @@ struct vm_operations_struct {
 
 ## Red-black Trees for VMAs
 
-[[[TODO: red-black trees]]]
+Virtual memory areas are dynamically managed and must be accessed, inserted, and deleted frequently.
+To identify a particular VMA quickly, the Linux kernel uses a red-black tree.
+This performs well and has little memory overhead, with a guaranteed `O(log n)` runtime for search, insertion, and deletion.
+
+Historically, the Linux kernel also kept a doubly-linked list of VMAs (sorted from lowest address to highest address), but this was removed in kernel release v6.1.0 because the RB tree was fast enough that the extra work for managing the linked list outweighed the potential benefits.
+
+The details of red-black tree algorithms are out of the scope of this assignment, but here's a high-level overview of properties that maintain its self-balancing nature:
+
+1. Each node in the tree is either _red_ or _black_.
+2. The root node is always black.
+3. All leaf nodes (i.e., nodes with no children) are always black.
+4. Both children of a red node must be black.
+5. Every path from any node to its descendant leaves must contain the same number of black nodes.
+
+Maintaining these properties prevents the tree from becoming unbalanced, which maintains the `O(log n)` runtime complexity for searches, insertions, and removals.
+
+In the kernel, red-black trees are represented (generically) in two data structures, `struct rb_root` and `struct rb_node`.
+These two data structures are defined next to each other in file [`include/linux/rbtree_types.h` (link to source)](https://elixir.bootlin.com/linux/v6.11/source/include/linux/rbtree_types.h#L5).
+The relevant fields of this datatype are included below, with annotated descriptions:
+
+```C
+// A single node in the red-black tree.
+// Interestingly, instead of tracking its own color, it tracks its parent's color.
+struct rb_node {
+    // The color of this node's parent (red or black).
+    unsigned long  __rb_parent_color;
+
+    // The right-hand (recursive) child node.
+    struct rb_node *rb_right;
+
+    // The left-hand (recursive) child node.
+    struct rb_node *rb_left;
+};
+
+// This is simply a wrapper around a `rb_node`, which is the root node of the tree.
+struct rb_root {
+    // The root node of the tree.
+    struct rb_node *rb_node;
+};
+```
 
 
 ## Reverse Mapping
