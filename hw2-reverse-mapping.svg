@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="1420"
+   height="720"
+   version="1.1"
+   id="svg14"
+   sodipodi:docname="hw2-reverse-mapping.svg"
+   inkscape:version="1.3.2 (091e20ef0f, 2023-11-25)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview14"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="0.79577465"
+     inkscape:cx="710"
+     inkscape:cy="359.39823"
+     inkscape:window-width="1920"
+     inkscape:window-height="985"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg14" />
+  <rect
+     width="1420"
+     height="720"
+     x="0"
+     y="0"
+     rx="80"
+     fill="#333333"
+     id="rect1" />
+  <rect
+     width="1400"
+     height="700"
+     x="10"
+     y="10"
+     rx="70"
+     fill="#CCCCCC"
+     id="rect2" />
+  <defs
+     id="defs2">
+    <marker
+       id="arrowhead"
+       viewBox="0 0 10 6"
+       markerWidth="10"
+       markerHeight="6"
+       refX="7.5"
+       refY="3"
+       orient="auto">
+      <polygon
+         points="0,0  0,6  10,3"
+         fill="black"
+         stroke-width="1"
+         stroke="none"
+         id="polygon2" />
+    </marker>
+  </defs>
+  <rect
+     width="420"
+     height="450"
+     x="80"
+     y="80"
+     fill="#450A0A"
+     id="rect3" />
+  <rect
+     width="400"
+     height="100"
+     x="90"
+     y="90"
+     fill="#FECACA"
+     id="rect4" />
+  <text
+     x="290"
+     y="140"
+     font-size="40"
+     dominant-baseline="middle"
+     text-anchor="middle"
+     font-family="Source Code Pro"
+     fill="#450A0A"
+     font-weight="bold"
+     id="text4">
+    vm_area_struct
+  </text>
+  <rect
+     width="400"
+     height="100"
+     x="90"
+     y="200"
+     fill="#F87171"
+     id="rect5" />
+  <text
+     x="290"
+     y="250"
+     font-size="36"
+     dominant-baseline="middle"
+     text-anchor="middle"
+     font-family="Source Code Pro"
+     fill="#450A0A"
+     id="text5">
+    * vm_file
+  </text>
+  <rect
+     width="400"
+     height="100"
+     x="90"
+     y="310"
+     fill="#F87171"
+     id="rect6" />
+  <text
+     x="290"
+     y="360"
+     font-size="36"
+     dominant-baseline="middle"
+     text-anchor="middle"
+     font-family="Source Code Pro"
+     fill="#450A0A"
+     id="text6">
+    * anon_vma
+  </text>
+  <rect
+     width="400"
+     height="100"
+     x="90"
+     y="420"
+     fill="#F87171"
+     id="rect7" />
+  <text
+     x="290"
+     y="470"
+     font-size="36"
+     dominant-baseline="middle"
+     text-anchor="middle"
+     font-family="Source Code Pro"
+     fill="#450A0A"
+     id="text7">
+    ...
+  </text>
+  <rect
+     width="420"
+     height="230"
+     x="920"
+     y="80"
+     fill="#431407"
+     id="rect8" />
+  <rect
+     width="400"
+     height="100"
+     x="930"
+     y="90"
+     fill="#FED7AA"
+     id="rect9" />
+  <text
+     x="1130"
+     y="140"
+     font-size="40"
+     dominant-baseline="middle"
+     text-anchor="middle"
+     font-family="Source Code Pro"
+     fill="#431407"
+     font-weight="bold"
+     id="text9">
+    file
+  </text>
+  <rect
+     width="400"
+     height="100"
+     x="930"
+     y="200"
+     fill="#FB923C"
+     id="rect10" />
+  <text
+     x="1130"
+     y="250"
+     font-size="36"
+     dominant-baseline="middle"
+     text-anchor="middle"
+     font-family="Source Code Pro"
+     fill="#431407"
+     id="text10">
+    ...
+  </text>
+  <rect
+     width="420"
+     height="230"
+     x="920"
+     y="410"
+     fill="#2E1065"
+     id="rect11" />
+  <rect
+     width="400"
+     height="100"
+     x="930"
+     y="420"
+     fill="#DDD6FE"
+     id="rect12" />
+  <text
+     x="1130"
+     y="470"
+     font-size="40"
+     dominant-baseline="middle"
+     text-anchor="middle"
+     font-family="Source Code Pro"
+     fill="#2E1065"
+     font-weight="bold"
+     id="text12">
+    anon_vma
+  </text>
+  <rect
+     width="400"
+     height="100"
+     x="930"
+     y="530"
+     fill="#A78BFA"
+     id="rect13" />
+  <text
+     x="1130"
+     y="580"
+     font-size="36"
+     dominant-baseline="middle"
+     text-anchor="middle"
+     font-family="Source Code Pro"
+     fill="#2E1065"
+     id="text13">
+    ...
+  </text>
+  <polyline
+     points="470,250  950,140"
+     stroke="black"
+     stroke-width="6"
+     fill="none"
+     marker-end="url(#arrowhead)"
+     id="polyline13" />
+  <polyline
+     points="470,360  950,470"
+     stroke="black"
+     stroke-width="6"
+     fill="none"
+     marker-end="url(#arrowhead)"
+     id="polyline14" />
+</svg>
