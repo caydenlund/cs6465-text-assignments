@@ -2,14 +2,22 @@
 
 **Author: Cayden Lund (u1182408)**
 
-[[[TODO: Introduction]]]
-
 Note that this document represents the current state of the Linux kernel and API at the time of writing, v6.11.0.
 
 
 ## Table of Contents
 
-[[[TODO: ToC]]]
+- [Virtual Memory Areas](#virtual-memory-areas)
+- [Maple Trees for VMAs](#maple-trees-for-vmas)
+- [Reverse Mapping to a Virtual Memory Area](#reverse-mapping-to-a-virtual-memory-area)
+  - [Reverse Mapping for File-Mapped Memory](#reverse-mapping-for-file-mapped-memory)
+  - [Reverse Mapping for Anonymous Memory](#reverse-mapping-for-anonymous-memory)
+- [Address Spaces](#address-spaces)
+- [Buffer Cache](#buffer-cache)
+- [Paging and Page Faults](#paging-and-page-faults)
+- [Page Swapping](#page-swapping)
+  - [Swapping Out](#swapping-out)
+  - [Swapping In](#swapping-in)
 
 
 ## Virtual Memory Areas
@@ -105,7 +113,10 @@ struct mm_struct {
 };
 ```
 
-**Virtual memory areas** (VMAs) represent contiguous regions of virtual memory in a process's address space and are central to the way that the Linux kernel organizes memory allocation.
+A key field here is `struct maple_tree mm_mt`, which holds all of the _virtual memory areas_ for the particular process.
+I will go into more detail on maple trees later, but at a high level, it's a balanced search tree with good performance.
+
+**Virtual memory areas** (VMAs) represent contiguous regions of virtual memory in a process's address space.
 VMAs are used to map files, allocate memory, and set up shared memory.
 
 A VMA is represented in the kernel by datatype `struct vm_area_struct`, defined in file [`include/linux/mm_types.h` (link to source)](https://elixir.bootlin.com/linux/v6.11/source/include/linux/mm_types.h#L664).
@@ -116,7 +127,8 @@ The relevant fields of this datatype are included below, with annotated descript
 // There is one of these for each virtual memory area, for each task.
 struct vm_area_struct {
     struct {
-        The VMA covers virtual address starting a `vm_start` and going up to `vm_end - 1`.
+        // The VMA covers virtual address starting at `vm_start`
+        // and going up to `vm_end - 1`.
         unsigned long vm_start;
         unsigned long vm_end;
     };
@@ -129,15 +141,6 @@ struct vm_area_struct {
     // Various different virtual memory flags.
     const vm_flags_t vm_flags;
 
-    // For some areas with an address space, a red-black tree is still used.
-    // In those cases, this is a linkage into that tree.
-    struct {
-        struct rb_node rb;
-        unsigned long rb_subtree_last;
-    } shared;
-
-    // A chain of anonymous VM areas.
-    struct list_head anon_vma_chain;
     // A pointer to the descriptor of this area's anonymous memory,
     // if this is an anonymous VMA.
     struct anon_vma *anon_vma;
@@ -222,19 +225,32 @@ struct vm_operations_struct {
 };
 ```
 
+All in all, the data structures look like this:
+
+<p align="center">
+    <img alt="(VMA data structures)" src="./hw2-to-vma.png" width="75%" />
+</p>
+
+_When the user tries to access a virtual address, a reverse mapping is done to find the right associated page.
+Every process has a unique `mm_struct` describing it.
+The `mm_struct` has a `maple_tree`, a balanced tree of all of its virtual memory areas.
+Through traversing the VMA maple tree, we find the right `vm_area_struct` that contains that virtual address (or `NULL` if there is no such VMA).
+Finally, each `vm_area_struct` has an associated `vm_operations_struct` that contains method pointers specific to that VMA._
+
 
 ## Maple Trees for VMAs
 
 I'm excited to talk about this, because this is a very recent change!
 Before now, the Linux kernel used a red-black tree to identify a particular virtual memory area quickly.
-The VMAs are dynamically managed and need to be accessed, inserted, and deleted frequently, and the self-balancing red-black tree was very effective at searching for an entry in the tree and performing updates to the tree with little overhead.
+The VMAs are dynamically managed and need to be accessed, inserted, and deleted frequently, and the self-balancing red-black tree was quite effective at searching for an entry in the tree and performing updates to the tree with little overhead.
+In addition to the red-black tree, each process memory descriptor (`mm_struct`) kept a doubly-linked list of the VMAs, sorted from the lowest address to highest address.
 
-Historically, the Linux kernel also kept a doubly-linked list of VMAs, sorted from lowest address to highest address. However, in kernel release v6.1.0, the red-black tree and the linked list were both removed and replaced with a new data structure: the **maple tree**, which was fast enough that the extra work for managing the linked list outweighed the potential benefits.
-The maple tree is related to B-trees, and as such the nodes in the tree contain multiple elements.
+However, in kernel release v6.1.0, the red-black tree and the linked list were both removed and replaced with a new data structure: the **maple tree**, which was fast enough that the extra work for managing an additional linked list outweighed the potential benefits.
+The maple tree is related to B-trees, and as such the nodes in the tree each contain multiple elements.
 Specifically, leaf nodes can hold up to 16 elements, and internal nodes can hold up to 10.
 This has a profound impact on runtime speed: elements can be inserted and removed frequently without having to re-balance the tree, because it can be done in this already-allocated space.
 It also allows the tree to take advantage of CPU caches more efficiently: nodes in the tree require at most 256 bytes, which is a multiple of common cache line sizes.
-Finally, perhaps the best performance advantage is that it was designed to work locklessly, using a read-copy-update model.
+Finally, perhaps the best performance advantage is that it was designed in concurrent contexts, using a read-copy-update model.
 
 An interesting detail about the maple tree is that the developers found that the implementation was so performant that it was as fast as the VMA cache that was in use, which tracked most-recently-accessed VMAs for quick lookup.
 Therefore, as a part of the introduction of the maple tree to manage VMAs, the VMA cache was completely removed.
@@ -294,7 +310,8 @@ We'll jump to the [`mtree_insert_range` implementation](https://elixir.bootlin.c
 ```C
 int mtree_insert(struct maple_tree *mt, unsigned long index, void *entry, gfp_t gfp) {
     // Initialize a new `mas_state` object named `ms`.
-    // This macro basically works like a constructor, initializing the fields to default values.
+    // This macro basically works like a constructor,
+    // initializing the fields to default values.
     // I've included this data structure below for reference.
     MA_STATE(ms, mt, first, last);
 
@@ -436,10 +453,61 @@ I could talk about maple trees all day.
 I find this really interesting.
 
 
-## Reverse Mapping
+## Reverse Mapping to a Virtual Memory Area
 
-At a high level, **reverse mapping** provides the ability to trace which virtual pages are mapped to which physical pages, of which there are two cases: _anonymous memory_ and _file-mapped memory_.
-This is, of course, used to resolve addresses for loads and stores, but it is also used for some more advanced operations such as page reclaiming, moving pages between NUMA nodes, swapping to disk, and memory defragmentation.
+At a high level, **reverse mapping** is the ability to trace from the physical page frame back to the virtual memory areas that map to it.
+This lets the kernel identify all processes and VMAs that have a particular page mapped, which lets it decide whether it's safe to drop pages, swap them to disk, or other memory operations.
+
+Given a `struct page`, the first thing that needs to be done is to identify the _folio_ that owns it.
+**Folios** are a recently-added abstraction that represents a collection of pages that are physically, virtually, and logically contiguous.
+Every `struct page` is owned by a `struct folio`, even if it's only a single page.
+The `struct folio` datatype is defined in file [`include/linux/mm_types.h` (link to source)](https://elixir.bootlin.com/linux/v6.11/source/include/linux/mm_types.h#L324).
+Public fields are included below, with added annotations:
+
+```C
+// Represents a collection of pages.
+struct folio {
+    struct {
+        // Same as the page flags.
+        // Tracks various attributes and states of the folio.
+        unsigned long flags;
+
+        // A linked list that manages the folio in least-recently-used caches.
+        // Lets the kernel make informed decisions about memory eviction.
+        struct list_head lru;
+
+        struct {
+            // Number of times this folio has been pinned by `mlock()`.
+            // Incremented every time the folio gets pinned.
+            unsigned int mlock_count;
+        };
+
+        // File:  This is the file it belongs to.
+        // Anonymous memory: Refers to the `anon_vma`.
+        struct address_space *mapping;
+
+        // File:  The offset within the file, in units of pages.
+        // Anonymous memory:  The index from the beginning of the mmap.
+        pgoff_t index;
+
+        union {
+            // Filesystem per-folio data.
+            // Saves some additional metadata of the folio as an entry
+            // in the filesystem.
+            void *private;
+
+            // Used for `swp_entry_t` if `folio_test_swapcache()`.
+            // If the folio is in swap cache, this field points to the location
+            // of the swapped page.
+            swp_entry_t swap;
+        };
+    };
+};
+```
+
+We can get the `struct folio` for a given `struct page` by calling the method `page_folio(page)`.
+
+There are two types of virtual memory areas: _anonymous memory_ and _file-mapped memory_.
 
 **File-mapped memory** is memory that is backed by files, used for shared memory regions (such as for shared libraries) and memory-mapped files.
 This is allocated with `mmap()` with a file descriptor.
@@ -449,8 +517,7 @@ On the other hand, **anonymous memory** is not backed by a file, such as pages a
 This is usually allocated with `brk()`, `sbrk()`, or `mmap()` without a file descriptor.
 When a VMA is anonymous memory, then the `anon_vma` field of the the associated `struct vm_area_struct` representing that VMA is set to the relevant `struct anon_vma` describing that anonymous memory area.
 
-To make this more clear, I've prepared an illustration of this:
-
+To make this more clear, I've prepared an illustration:
 
 <p align="center">
     <img alt="(Reverse mapping of `vm_area_struct`)" src="./hw2-reverse-mapping.png" width="75%" />
@@ -460,11 +527,17 @@ To make this more clear, I've prepared an illustration of this:
     <i>Otherwise, the <code>vm_area_struct</code> represents anonymous memory, and the <code>anon_vma</code> field points to the relevant <code>anon_vma</code> that describes it.</i>
 </p>
 
-When performing reverse mapping, you first identify the VMA in which the virtual address resides.
-This is done quite quickly using the maple tree, as I discussed earlier.
-Then, once we know the area and have the corresponding `vm_area_struct`, we can check whether it's mapped to a file or anonymously by checking whether fields `vm_file` and `anon_vma` are set.
+With that out of the way, the next step is to identify whether this particular folio is file-mapped memory or anonymous memory.
+We can simply do this with a call to `folio_test_anon(folio)`.
 
-For file-mapped memory, the kernel uses the `page->mapping` field, which points to the `address_space` structure associated with the file.
+What happens next depends on whether the folio is file-mapped or anonymous memory.
+
+
+### Reverse Mapping for File-Mapped Memory
+
+The kernel then uses the `folio->mapping` field.
+For file-mapped folios, this is a pointer to an `address_space` structure associated with that file.
+
 Let's examine this data structure. 
 It represents the mapping between a file and its memory pages.
 It's defined in file [`include/linux/fs.h` (link to source)](https://elixir.bootlin.com/linux/v6.11/source/include/linux/fs.h#L466).
@@ -499,11 +572,7 @@ struct address_space {
     // with this `address_space`.
     atomic_t i_mmap_writable;
 
-    // Represents a cache of red-black binary search tree entries in the VMA tree
-    // that maps this address space.
-    // I guess they didn't remove it from the data structure here, even though I read
-    // that they stopped doing the red-black tree cache when they stopped using the RB tree
-    // in kernel v6.1.
+    // Represents a red-black binary search tree of VMAs that map this address space.
     struct rb_root_cached i_mmap;
 
     // The number of pages currently loaded into memory for this `address_space`.
@@ -541,28 +610,198 @@ struct address_space {
 };
 ```
 
-### Reverse Mapping for File-Mapped Memory
+Once we have a `struct address_space` object, we can get all VMAs that map to this folio of memory through the field `rb_root`, a red-black tree.
+As such, the kernel can lookup all virtual memory areas across all threads that map to a file-mapped page.
 
-[[[TODO: reverse mapping for anonymous and file-mapped memory]]]
+<p align="center">
+    <img alt="(Reverse mapping for file-mapped memory)" src="./hw2-reverse-file-mapping.png" width="100%" />
+</p>
+
+
+### Reverse Mapping for Anonymous Memory
+
+Again, the kernel then uses the `folio->mapping` field.
+For anonymously-mapped folios, though, this is a pointer to a `struct anon_vma` structure, which keeps track of the VMAs that refer to the same set of pages; it's defined in file [`include/linux/rmap.h` (link to source)](https://elixir.bootlin.com/linux/v6.11/source/include/linux/rmap.h#L31).
+The relevant fields are included below, with annotations:
+
+```C
+struct anon_vma {
+    // Pointer to the root `anon_vma` in a hierarchy of anonymous VMAs.
+    // This facilitates sharing anonymous VMAs across multiple processes
+    // (e.g., after a call to `fork()`).
+    struct anon_vma *root;
+
+    // This is a read-write semaphore for controlling access to this `anon_vma`.
+    struct rw_semaphore rwsem;
+
+    // This is an atomic reference counter that tracks the number of active
+    // references to this virtual memory area.
+    atomic_t refcount;
+
+    // A counter of all of this tree node's children, including itself.
+    unsigned long num_children;
+
+    // A counter of the number of VMAs that actively map to this `anon_vma`.
+    unsigned long num_active_vmas;
+
+    // The parent node in the hierarchy.
+    struct anon_vma *parent;
+
+    // This is a red-black tree that stores and retrieves VMAs
+    // mapping to this `anon_vma`.
+    struct rb_root_cached rb_root;
+};
+```
+
+This `anon_vma` structure directly refers to all VMAs that map to that folio of memory through its red-black tree in field `rb_root`.
+This allows the kernel to traverse from a physical page back to the page table entries in the processes' address spaces that map it.
+This means that, given a physical page frame descriptor, we can identify whether it's actively being used by processes, which needs to be done to invalidate or update page table entries every time a page gets reclaimed or migrated.
+
+<p align="center">
+    <img alt="(Reverse mapping for anonymously-mapped memory)" src="./hw2-reverse-anon-mapping.png" width="100%" />
+</p>
 
 
 ## Address Spaces
 
-[[[TODO: address spaces]]]
+The **address space** refers to the range of memory addresses that a process can access.
+In Linux, each process has its own virtual address space, which emulates the physical address space on the machine, and there's a layer of indirection with page tables and hardware mechanisms (i.e., the MMU).
+This technique gives each process the illusion that it has access to the entire memory space, but in reality only segments of the address space are mapped.
+This ensures that processes can't access each other's memory (which has security vulnerability implications), and it also allows programs to be compiled with jumps to static addresses and with references to static addresses, which has runtime benefits and is also much easier to debug.
+
+Virtual memory abstracts physical memory into logical chunks (described by `struct page`).
+Like I said before, each process believes that it has access to a large, contiguous block of memory, but behind the scenes, only a portion of the pages in the virtual address space has a mapping to a corresponding physical page.
+
+In Linux, the address space is divided into _user space_ and _kernel space_.
+On 64-bit architectures, the first 16 bits of an address will be set to `0` if it's an address into the user space, or set to `1` otherwise.
+Like I said before, all processes have their own virtual memory space (in the user space), but the kernel virtual address space is shared across all processes.
+
+The virtual address space of a process is broken up into segments.
+These segments are defined by the virtual memory areas (described by `struct vm_area_struct`, as shown above).
+Each process has its own `struct mm_struct` instance to describe its address space, which contains the set of `struct vm_area_struct` describing the different areas, and also has a reference to the top-level page directory, file descriptors for any memory-mapped files, swap information, and more.
+
+`struct vm_area_struct` describes a contiguous subset of the virtual address space.
+It tracks the start and end addresses of its memory region, flags governing the permissions and state of the VMA, a pointer to the file if it's a memory-mapped file, and a pointer to a descriptor of an anonymous memory space otherwise.
 
 
 ## Buffer Cache
 
-[[[TODO]]]
+The buffer cache sits between the kernel's filesystem operations and physical I/O.
+It caches frequently-accessed disk blocks in memory, reducing the frequency of direct disk access and improving I/O performance.
+
+The **buffer head** (`struct buffer_head`) is the core structure of the buffer cache.
+It's defined in file [`include/linux/buffer_head.h` (link to source)](https://elixir.bootlin.com/linux/v6.11/source/include/linux/buffer_head.h#L59).
+Here is the definition, with annotations:
+
+```C
+struct buffer_head {
+    // Represents the state of the buffer as a bitmap.
+    // Tracks whether it's dirty, up-to-date, locked, etc.
+    unsigned long b_state;
+
+    // This is a circular linked list of all buffer heads associated
+    // with the same page.
+    struct buffer_head *b_this_page;
+
+    // This points to either the page or the folio structure
+    // that this buffer is mapped to.
+    union {
+        struct page *b_page;
+        struct folio *b_folio;
+    };
+
+    // This is the starting block number on the device for this buffer.
+    // This maps the buffer to the corresponding location on the device.
+    sector_t b_blocknr;
+
+    // The size of the buffer, in bytes.
+    size_t b_size;
+
+    // A pointer to the actual data within the page.
+    char *b_data;
+
+    // Points to the `block_device` (device descriptor) that this buffer
+    // is associated with.
+    struct block_device *b_bdev;
+
+    // This is a function pointer to the I/O completion routine.
+    // It gets called whenever an I/O operation on the buffer completes.
+    bh_end_io_t *b_end_io;
+    // This is a pointer to some arbitrary data that the user can set to something
+    // for the `b_end_io` function to use.
+    void *b_private;
+
+    // A linked list of buffers associated with the same inode.
+    struct list_head b_assoc_buffers;
+
+    // Points to the `address_space` structure that this buffer is associated with.
+    struct address_space *b_assoc_map;
+
+    // The number of users of this buffer head.
+    // Used to make sure that it doesn't get allocated while still in use.
+    atomic_t b_count;
+
+    // Serializes I/O completion of buffers in the same page.
+    spinlock_t b_uptodate_lock;
+};
+```
 
 
-## Swap and Paging
+## Paging and Page Faults
 
-[[[TODO]]]
+I went quite into detail on paging in assignment 1, so here's a fairly thorough summary, and you can refer to homework 1 for details.
+
+The Linux kernel divides memory into _pages_, blocks of `PAGE_SIZE` (4 KiB, with a few exceptions).
+Pages are described by the datatype `struct page`; each page has its own descriptor in an array.
+The Buddy allocator is used to allocate and free memory pages.
+
+Virtual addresses are an abstraction for real physical memory addresses.
+See section "Address Spaces" above for more information.
+The virtual address space is composed of mappings from virtual pages to physical pages.
+These mappings are recorded in the hierarchical _page table;_ each process has its own page table.
+
+The virtual address space is typically far larger than physical memory actually exists on the system.
+Only certain areas within the address space are mapped to corresponding physical pages.
+When a process attempts to load from or store to a virtual address, the CPU traverses the page table to find the corresponding physical mapping for that virtual address.
+If the virtual address didn't have a mapped physical page (i.e., there isn't an entry in the page table for that virtual address), or if the page wasn't present in physical memory, a _page fault_ is triggered.
+
+On a **page fault**, where a process tries to dereference a virtual address that doesn't have a corresponding physical address, the CPU generates a page fault exception, and the kernel's fault handler takes over.
+The kernel records the context of the current process, including the program counter and register values.
+The kernel's handler checks the page tables to see whether the page fault was caused by a missing page (perhaps the page was _swapped_ to disk, or the page is a memory-mapped file that hasn't been loaded yet); if so, then the handler will load that page, update the page tables, and transfer control back to the process.
+If the page fault was caused by an _invalid access_ (i.e., accessing a page that isn't permitted), then the handler terminates the process.
+
+When the kernel's handler needs to load a page from the disk, it first needs to find a free physical page.
+If there isn't one, then it will pick a page that hasn't been accessed recently and swap it to the disk.
+Then, it reads the respective page from the disk into the free physical page frame.
+
+Note that the kernel loads pages into memory when they're accessed, not beforehand.
+This helps the system to not get saturated with allocated pages of memory that aren't being used yet.
 
 
-## Page Faults
+## Page Swapping
 
-[[[TODO: page faults]]]
+**Page swapping** (sometimes referred to as simply _paging_) is the process of moving page frames from physical RAM to a secondary storage medium (usually a hard drive) or vice versa.
+The idea is that frequently-used memory can stay in the RAM, while infrequently-used memory can spend most of its time in the secondary storage medium, which will keep the (much) faster RAM available for allocations.
 
-[[[TODO: swap in/swap out operations]]]
+### Swapping Out
+
+Linux uses a variation of a _Least-recently used_ list for page replacement.
+Every time a page is used, it gets moved to the end of the list.
+It keeps track of "active" (frequently accessed) and "inactive" (haven't been accessed in a long time) pages separately.
+Then, when a page needs to be freed to make space for another allocation, the lists are sorted approximately in order from least-used to most-used, and pages from the inactive list are candidates for swapping to disk.
+
+If the candidate page is marked as "clean", meaning that it hasn't been modified since the last time it was loaded from the disk, it can immediately be swapped out.
+Otherwise, the page is "dirty", and the page's new, updated value is written back to the original backing store (e.g., a file for memory-mapped files).
+
+Finally, when a page is swapped out, it gets recorded in the kernel's _swap map_.
+
+### Swapping In
+
+When a process accesses a page that has been swapped out, a _page fault_ occurs, and the kernel will load the page back into RAM before returning control back to the process.
+The _swap map_ tells the kernel where to find the exact disk location of the swapped-out page.
+
+Before the page is loaded into memory, a free physical page frame needs to be allocated as the destination.
+If the system is running low on memory, then an "inactive" page will get swapped out to the disk, and the newly-freed page frame is allocated as the destination.
+
+Then, the kernel loads the data from the disk and copies it into the page frame.
+Finally, it updates the process's page tables to record that the page is now present in RAM.

@@ -1,0 +1,269 @@
+<svg width="3100"
+     height="940">
+  <rect width="3100"
+        height="940"
+        x="0"
+        y="0"
+        rx="80"
+        fill="#333333" />
+  <rect width="3080"
+        height="920"
+        x="10"
+        y="10"
+        rx="70"
+        fill="#CCCCCC" />
+  <defs>
+    <marker id="arrowhead"
+            viewBox="0 0 10 6"
+            markerWidth="10"
+            markerHeight="6"
+            refX="7.5"
+            refY="3"
+            orient="auto">
+      <polygon points="0,0  0,6  10,3"
+               fill="black"
+               stroke-width="1"
+               stroke="none" />
+    </marker>
+  </defs>
+  <rect width="420"
+        height="230"
+        x="80"
+        y="80"
+        fill="#172554" />
+  <rect width="400"
+        height="100"
+        x="90"
+        y="90"
+        fill="#BFDBFE" />
+  <text x="290"
+        y="140"
+        font-size="36"
+        dominant-baseline="middle"
+        text-anchor="middle"
+        font-family="Source Code Pro"
+        fill="#172554"
+        font-weight="bold">
+    page
+  </text>
+  <rect width="400"
+        height="100"
+        x="90"
+        y="200"
+        fill="#60A5FA" />
+  <text x="290"
+        y="250"
+        font-size="36"
+        dominant-baseline="middle"
+        text-anchor="middle"
+        font-family="Source Code Pro"
+        fill="#172554">
+    ...
+  </text>
+  <rect width="420"
+        height="120"
+        x="920"
+        y="190"
+        fill="#020617" />
+  <rect width="400"
+        height="100"
+        x="930"
+        y="200"
+        fill="#E2E8F0" />
+  <text x="1130"
+        y="250"
+        font-size="36"
+        dominant-baseline="middle"
+        text-anchor="middle"
+        font-family="Source Code Pro"
+        fill="#020617"
+        font-weight="bold">
+    page_folio(page)
+  </text>
+  <rect width="420"
+        height="340"
+        x="1760"
+        y="80"
+        fill="#451A03" />
+  <rect width="400"
+        height="100"
+        x="1770"
+        y="90"
+        fill="#FDE68A" />
+  <text x="1970"
+        y="140"
+        font-size="36"
+        dominant-baseline="middle"
+        text-anchor="middle"
+        font-family="Source Code Pro"
+        fill="#451A03"
+        font-weight="bold">
+    folio
+  </text>
+  <rect width="400"
+        height="100"
+        x="1770"
+        y="200"
+        fill="#FBBF24" />
+  <text x="1970"
+        y="250"
+        font-size="36"
+        dominant-baseline="middle"
+        text-anchor="middle"
+        font-family="Source Code Pro"
+        fill="#451A03">
+    * mapping
+  </text>
+  <rect width="400"
+        height="100"
+        x="1770"
+        y="310"
+        fill="#FBBF24" />
+  <text x="1970"
+        y="360"
+        font-size="36"
+        dominant-baseline="middle"
+        text-anchor="middle"
+        font-family="Source Code Pro"
+        fill="#451A03">
+    ...
+  </text>
+  <rect width="420"
+        height="340"
+        x="2600"
+        y="80"
+        fill="#052E16" />
+  <rect width="400"
+        height="100"
+        x="2610"
+        y="90"
+        fill="#BBF7D0" />
+  <text x="2810"
+        y="140"
+        font-size="36"
+        dominant-baseline="middle"
+        text-anchor="middle"
+        font-family="Source Code Pro"
+        fill="#052E16"
+        font-weight="bold">
+    address_space
+  </text>
+  <rect width="400"
+        height="100"
+        x="2610"
+        y="200"
+        fill="#4ADE80" />
+  <text x="2810"
+        y="250"
+        font-size="36"
+        dominant-baseline="middle"
+        text-anchor="middle"
+        font-family="Source Code Pro"
+        fill="#052E16">
+    i_mmap
+  </text>
+  <rect width="400"
+        height="100"
+        x="2610"
+        y="310"
+        fill="#4ADE80" />
+  <text x="2810"
+        y="360"
+        font-size="36"
+        dominant-baseline="middle"
+        text-anchor="middle"
+        font-family="Source Code Pro"
+        fill="#052E16">
+    ...
+  </text>
+  <rect width="420"
+        height="120"
+        x="1340"
+        y="520"
+        fill="#450A0A" />
+  <rect width="400"
+        height="100"
+        x="1350"
+        y="530"
+        fill="#FECACA" />
+  <text x="1550"
+        y="580"
+        font-size="36"
+        dominant-baseline="middle"
+        text-anchor="middle"
+        font-family="Source Code Pro"
+        fill="#450A0A"
+        font-weight="bold">
+    vm_area_struct
+  </text>
+  <rect width="420"
+        height="120"
+        x="500"
+        y="740"
+        fill="#450A0A" />
+  <rect width="400"
+        height="100"
+        x="510"
+        y="750"
+        fill="#FECACA" />
+  <text x="710"
+        y="800"
+        font-size="36"
+        dominant-baseline="middle"
+        text-anchor="middle"
+        font-family="Source Code Pro"
+        fill="#450A0A"
+        font-weight="bold">
+    vm_area_struct
+  </text>
+  <rect width="420"
+        height="120"
+        x="2180"
+        y="740"
+        fill="#450A0A" />
+  <rect width="400"
+        height="100"
+        x="2190"
+        y="750"
+        fill="#FECACA" />
+  <text x="2390"
+        y="800"
+        font-size="36"
+        dominant-baseline="middle"
+        text-anchor="middle"
+        font-family="Source Code Pro"
+        fill="#450A0A"
+        font-weight="bold">
+    vm_area_struct
+  </text>
+  <polyline points="470,140  950,250"
+            stroke="black"
+            stroke-width="6"
+            fill="none"
+            marker-end="url(#arrowhead)" />
+  <polyline points="1310,250  1790,140"
+            stroke="black"
+            stroke-width="6"
+            fill="none"
+            marker-end="url(#arrowhead)" />
+  <polyline points="2150,250  2630,140"
+            stroke="black"
+            stroke-width="6"
+            fill="none"
+            marker-end="url(#arrowhead)" />
+  <polyline points="2630,250  1730,580"
+            stroke="black"
+            stroke-width="6"
+            fill="none"
+            marker-end="url(#arrowhead)" />
+  <polyline points="1370,580  890,800"
+            stroke="black"
+            stroke-width="6"
+            fill="none"
+            marker-end="url(#arrowhead)" />
+  <polyline points="1730,580  2210,800"
+            stroke="black"
+            stroke-width="6"
+            fill="none"
+            marker-end="url(#arrowhead)" />
+</svg>
